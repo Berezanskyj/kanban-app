@@ -83,3 +83,5 @@
     // Envio dos dados
     xhr.send(`usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`);
 }
+
+    
