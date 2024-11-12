@@ -77,10 +77,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/quadro.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <title>Kanban App</title>
 </head>
 <body>
-   <%String nomeUsuario = (String) session.getAttribute("nome");%> 
+   <%String nomeUsuario = (String) session.getAttribute("userName");%> 
     <div class="header">
         <h1>Kanban App</h1>
         <h1>Olá, <%= nomeUsuario %></h1>
@@ -96,6 +97,10 @@
                 <div class="cards-list">
                     <% for (Map<String, String> tarefa : tarefasColuna1) { %>
                         <div id="<%= tarefa.get("id") %>" class="card" ondblclick="openEditModal(<%= tarefa.get("id") %>)" draggable="true" ondragstart="dragstart_handler(event);">
+                            <div class="info">
+                                <b>ID:</b> 
+                                <span><%= tarefa.get("id") %></span>
+                            </div>
                             <div class="info">
                                 <b>Descrição:</b>
                                 <span><%= tarefa.get("descricao") %></span>
@@ -124,6 +129,10 @@
                 <div class="cards-list">
                     <% for (Map<String, String> tarefa : tarefasColuna2) { %>
                        <div id="<%= tarefa.get("id") %>" class="card" ondblclick="openEditModal(<%= tarefa.get("id") %>)" draggable="true" ondragstart="dragstart_handler(event);">
+                           <div class="info">
+                                <b>ID:</b> 
+                                <span><%= tarefa.get("id") %></span>
+                            </div>
                             <div class="info">
                                 <b>Descrição:</b>
                                 <span><%= tarefa.get("descricao") %></span>
@@ -153,6 +162,10 @@
                     <% for (Map<String, String> tarefa : tarefasColuna3) { %>
                         <div id="<%= tarefa.get("id") %>" class="card" ondblclick="openEditModal(<%= tarefa.get("id") %>)" draggable="true" ondragstart="dragstart_handler(event);">
                             <div class="info">
+                                <b>ID:</b> 
+                                <span><%= tarefa.get("id") %></span>
+                            </div>
+                            <div class="info">
                                 <b>Descrição:</b>
                                 <span><%= tarefa.get("descricao") %></span>
                             </div>
@@ -180,6 +193,10 @@
                 <div class="cards-list">
                     <% for (Map<String, String> tarefa : tarefasColuna4) { %>
                         <div id="<%= tarefa.get("id") %>" class="card" ondblclick="openEditModal(<%= tarefa.get("id") %>)" draggable="true" ondragstart="dragstart_handler(event);">
+                            <div class="info">
+                                <b>ID:</b> 
+                                <span><%= tarefa.get("id") %></span>
+                            </div>
                             <div class="info">
                                 <b>Descrição:</b>
                                 <span><%= tarefa.get("descricao") %></span>
@@ -249,7 +266,7 @@
                 
                 
 
-    <!--<script src="js/moment.min.js"></script>-->
+    
     <script src="js/kanban.js"></script>
 </body>
 </html>

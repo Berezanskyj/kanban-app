@@ -23,7 +23,6 @@ function openModal(data_column) {
     column.value = data_column;  // Definir a coluna selecionada
 
     // Desabilitar o select de coluna no modo de criação
-    column.disabled = true;
 
     // Ajustar o action para quadroSubmit.jsp (criação de nova tarefa)
     taskForm.action = 'quadroSubmit.jsp';

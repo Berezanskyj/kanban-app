@@ -15,38 +15,50 @@
 
 
 
- <%
-        //CADASTRANDO CARD NO BANCO DE DADOS.
-        String descricao = request.getParameter("descricao");
-        String prioridade = request.getParameter("prioridade");
-        String prazo = request.getParameter("prazo");
-        String coluna = request.getParameter("coluna");
-     
-     
-            Connection conecta = null;
-            PreparedStatement st = null;
-            String resposta = "";
+ <% 
+     // Captura os parâmetros do formulário
+     String descricao = request.getParameter("descricao");
+     String prioridade = request.getParameter("prioridade");
+     String prazo = request.getParameter("prazo");
+     String coluna = request.getParameter("coluna");
 
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanbanapp", "root", "");
+     // Verifica se os parâmetros não são nulos antes de tentar inseri-los
+     if (descricao == null || prioridade == null || prazo == null || coluna == null) {
+         response.getWriter().println("Erro: parâmetros não recebidos corretamente.");
+         return; // Evita continuar a execução do código se algo estiver errado.
+     }
 
-                st = conecta.prepareStatement("INSERT INTO tarefas (descricao, prioridade, prazo, coluna) VALUES (?, ?, ?, ?)");
-                st.setString(1, descricao);
-                st.setString(2, prioridade);
-                st.setString(3, prazo);
-                st.setString(4, coluna);
-                st.executeUpdate();
-                
-                response.sendRedirect("quadro.jsp");
+     // Conectar ao banco de dados
+     Connection conecta = null;
+     PreparedStatement st = null;
+     String resposta = "";
 
-            } catch (ClassNotFoundException e) {
-                resposta = "Erro: Driver JDBC não encontrado.";
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (st != null) try { st.close(); } catch (SQLException ignore) {}
-                if (conecta != null) try { conecta.close(); } catch (SQLException ignore) {}
-            }
-%>
+     try {
+         Class.forName("com.mysql.cj.jdbc.Driver");
+         conecta = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanbanapp", "root", "");
+
+         // Inserir tarefa no banco de dados
+         st = conecta.prepareStatement("INSERT INTO tarefas (descricao, prioridade, prazo, coluna) VALUES (?, ?, ?, ?)");
+         st.setString(1, descricao);
+         st.setString(2, prioridade);
+         st.setString(3, prazo);
+         st.setString(4, coluna);
+
+         // Executar o insert
+         st.executeUpdate();
+
+         
+
+     } catch (ClassNotFoundException e) {
+         resposta = "Erro: Driver JDBC não encontrado.";
+         e.printStackTrace();
+     } catch (SQLException e) {
+         e.printStackTrace();
+     } finally {
+         // Fecha os recursos
+         if (st != null) try { st.close(); } catch (SQLException ignore) {}
+         if (conecta != null) try { conecta.close(); } catch (SQLException ignore) {}
+         // Redireciona para o quadro após inserção
+         response.sendRedirect("quadro.jsp");
+     }
+ %>

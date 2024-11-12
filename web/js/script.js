@@ -7,39 +7,98 @@
             label.innerHTML = label.innerText.split('').map((letters, i) => `<span style="transition-delay: ${i*50}ms">${letters}</span>`).join('');
         });
         
-    function enviarDadosRegistro(event) {
-        event.preventDefault(); // Impede o envio padrão do formulário
+function enviarDadosRegistro(event) {
+    event.preventDefault(); // Impede o envio padrão do formulário
 
-        // Coleta dos dados do formulário
-        const nome = document.getElementById('nome').value;
-        const usuario = document.getElementById('usuario').value;
-        const senha = document.getElementById('senha').value;
+    // Coleta dos dados do formulário
+    const nome = document.getElementById('nome').value;
+    const usuario = document.getElementById('usuario').value;
+    const senha = document.getElementById('senha').value;
+    const senha2 = document.getElementById('senha2').value;
 
-        // Configura a requisição AJAX
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "registroSubmit.jsp", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // Exibir o SweetAlert com a resposta do servidor
-                Swal.fire({
-                    title: 'Cadastro',
-                    text: xhr.responseText,
-                    icon: 'success', // ou 'error' dependendo da resposta
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Redireciona para a página de login após o OK
-                        window.location.href = "index.jsp";
-                    }
-                });
-            }
-        };
-
-        // Envio dos dados
-        xhr.send(`nome=${encodeURIComponent(nome)}&usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`);
+    // Verificação das senhas
+    if (senha !== senha2) {
+        Swal.fire({
+            title: 'Erro',
+            text: 'As senhas não coincidem. Por favor, verifique e tente novamente.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
     }
+    
+    if (nome === '' || usuario === '' || senha === '' || senha2 === '') {
+        Swal.fire({
+            title: 'Erro',
+            text: 'Por favor, preencha todos os campos.',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
+        return; // Impede o envio da requisição AJAX
+    }
+
+    // Configura a requisição AJAX
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "registroSubmit.jsp", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            try {
+                // Fazer o parse da resposta JSON
+                const response = JSON.parse(xhr.responseText);
+
+                // Verificar o status da resposta
+                if (response.status === "error") {
+                    Swal.fire({
+                        title: 'Erro',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                } else if (response.status === "success") {
+                    Swal.fire({
+                        title: 'Cadastro',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "index.jsp";
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Erro',
+                        text: 'Resposta desconhecida do servidor.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (e) {
+                Swal.fire({
+                    title: 'Erro',
+                    text: 'Erro ao processar a resposta do servidor.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                console.error('Erro de parsing JSON:', e);
+            }
+        } else if (xhr.readyState === 4) {
+            // Exibir mensagem de erro se houver problema na requisição
+            Swal.fire({
+                title: 'Erro',
+                text: 'Houve um problema ao se conectar ao servidor. Tente novamente mais tarde.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
+    // Enviar dados para o servidor
+    const params = `nome=${encodeURIComponent(nome)}&usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`;
+    xhr.send(params);
+}
     
     function enviarLogin(event) {
     event.preventDefault(); // Impede o envio padrão do formulário
@@ -47,6 +106,16 @@
     // Coleta dos dados do formulário
     const usuario = document.getElementById('usuario').value;
     const senha = document.getElementById('senha').value;
+    
+    if (usuario === '' || senha === '') {
+        Swal.fire({
+            title: 'Erro',
+            text: 'Por favor, preencha todos os campos.',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
+        return; // Impede o envio da requisição AJAX
+    }
 
     // Configura a requisição AJAX
     const xhr = new XMLHttpRequest();
